@@ -32,6 +32,9 @@ globals
    repro-logistic-B
    repro-prob          ; Annual probability of a pack reproducing
    
+   extintions
+   dont-stop
+   
    ; See "setup" concerning other parameters distributed in code
  ]
  
@@ -117,7 +120,7 @@ end
 to go
 
  tick
- if ticks > years-to-simulate [stop]
+ if (ticks > years-to-simulate) and (dont-stop = 0) [ stop ]
  
  ; First, age and status updates
  ask dogs
@@ -544,6 +547,17 @@ to test-packs
   file-close
 
 end
+
+to extintion-probability
+  set extintions 0
+  set dont-stop true
+  repeat experiment-iterations [
+    setup
+    while [ticks > years-to-simulate] [ go ]
+    if count dogs = 0 [ set extintions extintions + 1 ]
+  ]
+  set dont-stop 0
+end
 @#$#@#$#@
 GRAPHICS-WINDOW
 221
@@ -695,6 +709,49 @@ carrying-capacity
 1
 NIL
 HORIZONTAL
+
+BUTTON
+606
+13
+763
+46
+Extintion probability
+extintion-probability
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+781
+13
+970
+46
+experiment-iterations
+experiment-iterations
+0
+200
+3
+1
+1
+NIL
+HORIZONTAL
+
+MONITOR
+606
+64
+663
+109
+Result
+extintions / experiment-iterations
+17
+1
+11
 
 @#$#@#$#@
 # THE WILD DOG MODEL
@@ -1040,7 +1097,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0RC4
+NetLogo 5.1.0
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
